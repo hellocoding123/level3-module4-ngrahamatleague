@@ -2,6 +2,7 @@ package _00_IntroToStacks;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Stack;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,19 +27,28 @@ public class _02_TextUndoRedo implements KeyListener{
 	
 	
 	String text = "";
+	JFrame frame = new JFrame();
+	JPanel panel = new JPanel();
+	JLabel label = new JLabel();
+	
+	Stack<Character> stack = new Stack<Character>();
 	
 	public static void main(String[] args) {
 		
-		JFrame frame = new JFrame();
-		JPanel panel = new JPanel();
-		JLabel label = new JLabel();
-		
+		_02_TextUndoRedo txt = new _02_TextUndoRedo();
+		txt.start();		
+	}
+	
+	void start() {
 		frame.add(panel);
 		panel.add(label);
 		
+		frame.addKeyListener(this);
+		
 		frame.setVisible(true);
 		
-		JLabel.setText(text);
+		label.setText(text);
+		
 	}
 
 	@Override
@@ -56,11 +66,21 @@ public class _02_TextUndoRedo implements KeyListener{
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		if(!(e.getKeyChar() == '\b')) {
-			text += e.getKeyChar();
-		}
-		else {
+		if(e.getKeyChar() == '\b') {
+			stack.push(text.charAt(text.length()-1));
 			text = text.substring(0,text.length()-1);
+			label.setText(text);
+		}
+		else if(e.getKeyChar() == '\u001A') {
+			if(!stack.isEmpty()) {
+				text += stack.pop();
+				label.setText(text);
+			}
+		}
+		
+		else {
+			text += e.getKeyChar();
+			label.setText(text);
 		}
 		//System.out.println(e.getKeyChar());
 		
