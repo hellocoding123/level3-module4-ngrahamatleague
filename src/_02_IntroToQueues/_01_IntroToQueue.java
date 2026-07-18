@@ -30,28 +30,56 @@ package _02_IntroToQueues;
  * Repeat until there are no more elements in the stack and queue
  */
 
+import java.util.ArrayDeque;
+import java.util.Random;
+import java.util.Stack;
+
 public class _01_IntroToQueue {
     public static void main(String[] args) {
         // 1. Create a Stack of Doubles using the Stack class
         //    Note: you have to use the capitalized Double and not double
-
+    	Stack <Double> stack = new Stack <Double>();
         // 2. Use a loop to add 100 random doubles between 0 and 100 to the Stack
-
+    	Random rand = new Random();
+    	
+    	for(int i = 0; i < 100; i ++) {
+    		stack.add(rand.nextDouble()*100);
+    	}
         // 3. Create a Queue of Doubles using the ArrayDeque class
         //    Note: you have to use the capitalized Double and not double
-
+    	ArrayDeque <Double> queue = new ArrayDeque<Double>();
         // 4. Pop off 5 elements from the Stack and add them to the Queue 
-
-        // 5. Print and remove a random number of elements, from 1 to 5 elements,
-        //    from the front of the Queue. Example:
-        //    "removing 3 elements from Queue: 25 57 2"
-
-        // 6. Pop off as many elements from the stack to fill the Queue with 5
-        //    elements. If there aren't enough elements in the Stack to fill the 
-        //    queue, fill the queue as much as possible. 
-
-        // 7. Loop until there are no more elements in either the Stack or Queue
-        //    and all the elements are printed
-        
+    	for(int i = 0; i < 5; i++) {
+    		queue.add(stack.pop());
+    	}
+    	
+    	while(!(stack.isEmpty()) && !(queue.isEmpty())) {
+	        // 5. Print and remove a random number of elements, from 1 to 5 elements,
+	        //    from the front of the Queue. Example:
+	        //    "removing 3 elements from Queue: 25 57 2"
+	    	int r = (int)(Math.random()*5)+1;
+	    	String removed = "";
+	    	
+	    	for(int i = 0; i < r; i++) {
+	    		if(!((i+1)==r)) {
+	    			removed += queue.pop() + ", ";
+	    		}
+	    		else {
+	    			removed += queue.pop();
+	    		}
+	    	}
+	    	
+	    	System.out.println("Removing 3 elements from Queue: " + removed);
+	        // 6. Pop off as many elements from the stack to fill the Queue with 5
+	        //    elements. If there aren't enough elements in the Stack to fill the 
+	        //    queue, fill the queue as much as possible. 
+	    	while (queue.size() < 5 && !(stack.size() == 0)) {
+	    		queue.add(stack.pop());
+	    	}
+	    	
+	        // 7. Loop until there are no more elements in either the Stack or Queue
+	        //    and all the elements are printed
+	    	System.out.println(stack.size());
+    	}
     }
 }
