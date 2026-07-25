@@ -19,47 +19,65 @@ public class MazeMaker {
         cols = c;
         maze = new Maze(rows, cols);
 
-        // 1. Pick a random cell along the border and remove its exterior wall.
-        //    This will be the starting point. Then select a random cell along
-        //    the opposite wall and remove its exterior wall. This will be the
-        //    finish line.
-        
-        // 2. select a random cell in the maze to start 
-        
-        // 3. call the selectNextPath method with the randomly selected cell
+        // 1. Pick random start and finish cells on opposite borders
+        int startRow = randGen.nextInt(rows);
+        Cell start = maze.getCell(startRow, 0);
+        start.setWestWall(false);
+
+        int finishRow = randGen.nextInt(rows);
+        Cell finish = maze.getCell(finishRow, cols - 1);
+        finish.setEastWall(false);
+
+        // 2. Select a random cell in the maze
+        int randomRow = randGen.nextInt(rows);
+        int randomCol = randGen.nextInt(cols);
+        Cell currentCell = maze.getCell(randomRow, randomCol);
+
+        // 3. Start generating the maze
+        selectNextPath(currentCell);
 
         return maze;
     }
 
-    // 4. Complete the selectNextPathMethod
+    // 4. Recursive backtracking algorithm
     private static void selectNextPath(Cell currentCell) {
-        // A. SET currentCell as visited
 
-        // B. check for unvisited neighbors using the cell
+        // A. Mark current cell as visited
+        currentCell.setBeenVisited(true);
 
-        // C. if has unvisited neighbors,
+        // B. Get all unvisited neighbors
+        ArrayList<Cell> neighbors = getUnvisitedNeighbors(currentCell);
 
-        // C1. select one at random.
+        // C. If there are unvisited neighbors
+        if (!neighbors.isEmpty()) {
 
-        // C2. push it to the stack
+            // C1. Pick one at random
+            Cell nextCell = neighbors.get(randGen.nextInt(neighbors.size()));
 
-        // C3. remove the wall between the two cells
+            // C2. Push current cell onto stack
+            uncheckedCells.push(currentCell);
 
-        // C4. make the new cell the current cell and SET it as visited
+            // C3. Remove the wall between them
+            removeWalls(currentCell, nextCell);
 
-        // C5. call the selectNextPath method with the current cell
+            // C4. Mark new cell visited
+            nextCell.setBeenVisited(true);
 
+            // C5. Continue recursively
+            selectNextPath(nextCell);
 
-        // D. if all neighbors are visited
+        } else {
 
-        // D1. if the stack is not empty
+            // D. All neighbors visited
+            if (!uncheckedCells.isEmpty()) {
 
-        // D1a. pop a cell from the stack
+                // D1a. Pop previous cell
+                Cell previousCell = uncheckedCells.pop();
 
-        // D1b. make that the current cell
-
-        // D1c. call the selectNextPath method with the current cell
-
+                // D1b & D1c. Continue from it
+                selectNextPath(previousCell);
+            }
+        }
     }
 
     // This method will check if c1 and c2 are adjacent.
@@ -84,11 +102,7 @@ public class MazeMaker {
         }
     }
 
-    // This method returns a list of all the neighbors around the specified
-    // cell that have not been visited. There are up to 4 neighbors per cell.
-    //          1
-    //       2 cell 3
-    //          4
+    // Returns all unvisited neighboring cells
     private static ArrayList<Cell> getUnvisitedNeighbors(Cell c) {
         int row = c.getRow();
         int col = c.getCol();
